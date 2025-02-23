@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:taxi_app/CustomerHistoryScreen.dart';
+import 'package:taxi_app/CustomerHomeScreen.dart';
+import 'package:taxi_app/CustomerProfileScreen.dart';
 import 'package:taxi_app/HistoryScreen.dart';
 import 'package:taxi_app/HomeScreen.dart';
+import 'package:taxi_app/MyHiresScreen.dart';
 import 'package:taxi_app/ProfileScreen.dart';
 import 'package:taxi_app/SplashScreen.dart';
 
@@ -19,12 +23,17 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const SplashScreenWrapper(),
+      home: const CustomerHomeScreen(),
 
       routes: {
         '/home': (context) => const HomeScreen(),
         '/history': (context) => const HistoryScreen(),
         '/profile': (context) => const ProfileScreen(),
+        '/chome': (context) => const CustomerHomeScreen(),
+        '/chistory': (context) => const CustomerHistoryScreen(),
+        '/cprofile': (context) => const CustomerProfileScreen(),
+        '/myhires': (context) => const MyHiresScreen(),
+
       },
     );
   }

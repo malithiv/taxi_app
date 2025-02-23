@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taxi_app/MyHiresScreen.dart';
+import 'package:taxi_app/PostHireScreen.dart';
 
 class CustomerHomeScreen extends StatefulWidget {
   const CustomerHomeScreen({Key? key}) : super(key: key);
@@ -11,7 +13,258 @@ class CustomerHomeScreen extends StatefulWidget {
 class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
   bool showAvailableHires = true;
   int _selectedIndex = 0;
+  Widget _buildMyHiresContent() {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        _buildActiveHireCard(),
+        const SizedBox(height: 16),
+        _buildCompletedHireCard(),
+        const SizedBox(height: 16),
+        _buildCompletedHireCard(),
+      ],
+    );
+  }
 
+  Widget _buildActiveHireCard() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFF16A34A), width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 2,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Active Hire',
+                style: GoogleFonts.roboto(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFF6B7280),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFDCFCE7),
+                  borderRadius: BorderRadius.circular(9999),
+                ),
+                child: Text(
+                  'In Progress',
+                  style: GoogleFonts.roboto(
+                    fontSize: 12,
+                    color: const Color(0xFF16A34A),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          _buildDriverInfo(),
+          const SizedBox(height: 12),
+          const Divider(),
+          const SizedBox(height: 12),
+          _buildLocationRow('From', '123 Malabe Central Road, Malabe'),
+          const SizedBox(height: 8),
+          _buildLocationRow('To', '45 Temple Road, Katharagama'),
+          const SizedBox(height: 12),
+          _buildVehicleInfo('Toyota Prius - WP CAB 1234'),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.phone_outlined, size: 14),
+                  label: Text(
+                    'Call Driver',
+                    style: GoogleFonts.roboto(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFF1B9AF5),
+                    side: const BorderSide(color: Color(0xFF1B9AF5)),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.navigation_outlined, size: 14),
+                  label: Text(
+                    'Track',
+                    style: GoogleFonts.roboto(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1B9AF5),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCompletedHireCard() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 2,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '23 Feb, 2025',
+                style: GoogleFonts.roboto(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFF6B7280),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF3F4F6),
+                  borderRadius: BorderRadius.circular(9999),
+                ),
+                child: Text(
+                  'Completed',
+                  style: GoogleFonts.roboto(
+                    fontSize: 12,
+                    color: const Color(0xFF4B5563),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          _buildDriverInfo(),
+          const SizedBox(height: 12),
+          const Divider(),
+          const SizedBox(height: 12),
+          _buildLocationRow('From', '78 Galle Road, Colombo 03'),
+          const SizedBox(height: 8),
+          _buildLocationRow('To', '256 Beach Road, Negombo'),
+          const SizedBox(height: 12),
+          _buildVehicleInfo('Honda Vezel - WP CAB 5678'),
+          const SizedBox(height: 16),
+          Center(
+            child: OutlinedButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.star_border, size: 14),
+              label: Text(
+                'Rate Driver',
+                style: GoogleFonts.roboto(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xFF1B9AF5),
+                side: const BorderSide(color: Color(0xFF1B9AF5)),
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDriverInfo() {
+    return Row(
+      children: [
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: const Color(0xFF1B9AF5), width: 2),
+            image: const DecorationImage(
+              image: AssetImage('assets/images/driver.png'),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'John Driver',
+              style: GoogleFonts.roboto(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            Row(
+              children: [
+                const Icon(Icons.star, size: 14, color: Color(0xFFFACC15)),
+                const SizedBox(width: 4),
+                Text(
+                  '4.8',
+                  style: GoogleFonts.roboto(
+                    fontSize: 12,
+                    color: const Color(0xFF6B7280),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildVehicleInfo(String vehicleDetails) {
+    return Row(
+      children: [
+        const Icon(Icons.directions_car_outlined, size: 14),
+        const SizedBox(width: 12),
+        Text(
+          vehicleDetails,
+          style: GoogleFonts.roboto(
+            fontSize: 14,
+            color: const Color(0xFF4B5563),
+          ),
+        ),
+      ],
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +274,8 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
           _buildHeader(),
           _buildTabs(),
           Expanded(
-            child: ListView(
+            child: showAvailableHires
+                ? ListView(
               padding: const EdgeInsets.all(16),
               children: [
                 _buildHireRequest(
@@ -51,7 +305,8 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                   isHighlighted: false,
                 ),
               ],
-            ),
+            )
+                : _buildMyHiresContent(),
           ),
         ],
       ),
@@ -310,7 +565,28 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
   Widget _buildNavItem(int index, IconData icon, String label) {
     final isSelected = _selectedIndex == index;
     return GestureDetector(
-      onTap: () => setState(() => _selectedIndex = index),
+      onTap: () {
+        setState(() => _selectedIndex = index);
+        if (!isSelected) {
+          switch (index) {
+            case 0: // Home
+              Navigator.pushReplacementNamed(context, '/chome');
+              break;
+            case 1: // History
+              Navigator.pushReplacementNamed(context, '/chistory');
+              break;
+            case 2: // My Hires
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const MyHiresScreen()),
+              );
+              break;
+            case 3: // Profile
+              Navigator.pushReplacementNamed(context, '/cprofile');
+              break;
+          }
+        }
+      },
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -333,26 +609,35 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
   }
 
   Widget _buildFloatingActionButton() {
-    return Container(
-      width: 56,
-      height: 56,
-      margin: const EdgeInsets.only(top: 32),
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        color: Color(0xFF1B9AF5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 15,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: const Icon(
-        Icons.add,
-        color: Colors.white,
-        size: 24,
+    return GestureDetector( // Wrap with GestureDetector
+      onTap: () {
+        Navigator.push( // Navigate to PostHireScreen
+          context,
+          MaterialPageRoute(builder: (context) => const PostHireScreen()),
+        );
+      },
+      child: Container(
+        width: 56,
+        height: 56,
+        margin: const EdgeInsets.only(top: 32),
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: Color(0xFF1B9AF5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 15,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+          size: 24,
+        ),
       ),
     );
   }
+
 }

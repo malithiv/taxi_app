@@ -306,7 +306,9 @@ class _PostHireScreenState extends State<PostHireScreen> {
             width: double.infinity,
             height: 45,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, '/myhires');
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF1B9AF5),
                 shape: RoundedRectangleBorder(
