@@ -65,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 277,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color(0xFF1B9AF5),
+                  color: Color(0xFF0097FF),
                 ),
               ),
             ),
@@ -77,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 406,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color(0x101B9AF5),
+                  color: Color(0x100215FF),
                 ),
               ),
             ),
@@ -112,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(width: 16),
                       _buildToggleButton(
-                        title: 'Driver',
+                        title: 'Drive',
                         isSelected: !isCustomer,
                         onTap: () => setState(() => isCustomer = false),
                       ),

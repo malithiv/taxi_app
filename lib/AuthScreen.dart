@@ -32,7 +32,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 height: 277,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color(0x101B9AF5),
+                  color: Color(0xFFC0D4FF),
                 ),
               ),
             ),
@@ -40,11 +40,11 @@ class _AuthScreenState extends State<AuthScreen> {
               top: -203,
               left: -129,
               child: Container(
-                width: 412,
-                height: 406,
+                width: 470,
+                height: 420,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color(0x101B9AF5),
+                  color: Color(0xFF5B8FFF),
                 ),
               ),
             ),
@@ -66,7 +66,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 174),
+                  const SizedBox(height: 140),
 
                   // Customer/Driver toggle
                   Row(
@@ -265,17 +265,17 @@ class _AuthScreenState extends State<AuthScreen> {
                                   ),
                                 ],
                               ),
-                              TextButton(
-                                onPressed: () {},
-                                child: Text(
-                                  'Forgot Password?',
-                                  style: GoogleFonts.roboto(
-                                    fontSize: 14,
-                                    color: const Color(0xFF219EBC),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
+                              // TextButton(
+                              //   onPressed: () {},
+                              //   child: Text(
+                              //     'Forgot Password?',
+                              //     style: GoogleFonts.roboto(
+                              //       fontSize: 14,
+                              //       color: const Color(0xFF219EBC),
+                              //       fontWeight: FontWeight.w500,
+                              //     ),
+                              //   ),
+                              // ),
                             ],
                           ),
                         ],
@@ -382,8 +382,8 @@ class _AuthScreenState extends State<AuthScreen> {
       onTap: onTap,
       child: Container(
         width: 163.5,
-        height: 97,
-        padding: const EdgeInsets.all(16),
+        height: 100, // Increased from 97 to 100
+        padding: const EdgeInsets.all(14), // Reduced from 16 to 14
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(4),
