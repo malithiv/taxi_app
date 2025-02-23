@@ -1,8 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taxi_app/EditProfileScreen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
+
+  void _navigateToEditProfile(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+    );
+  }
+
+  void _onNavItemTapped(BuildContext context, int index) {
+    switch (index) {
+      case 0:
+      // Navigate to Home
+        Navigator.pushReplacementNamed(context, '/home');
+        break;
+      case 1:
+      // Navigate to History
+        Navigator.pushReplacementNamed(context, '/history');
+        break;
+      case 2:
+      // Already on Profile
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +35,7 @@ class ProfileScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildHeader(),
+            _buildHeader(context),
             _buildDriverStatus(),
             _buildVehicleInformation(),
             _buildTripStatistics(),
@@ -19,10 +43,89 @@ class ProfileScreen extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: Container(
+        height: 72,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 2,
+              offset: const Offset(0, -1),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavItem(
+                context,
+                icon: Icons.home_outlined,
+                label: 'Home',
+                index: 0,
+                isSelected: false,
+              ),
+              _buildNavItem(
+                context,
+                icon: Icons.history,
+                label: 'History',
+                index: 1,
+                isSelected: false,
+              ),
+              _buildNavItem(
+                context,
+                icon: Icons.person_outline,
+                label: 'Profile',
+                index: 2,
+                isSelected: true,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildNavItem(
+      BuildContext context, {
+        required IconData icon,
+        required String label,
+        required int index,
+        required bool isSelected,
+      }) {
+    final color = isSelected ? const Color(0xFF5B8FFF) : const Color(0xFF9CA3AF);
+
+    return GestureDetector(
+      onTap: () => _onNavItemTapped(context, index),
+      child: SizedBox(
+        width: 62,
+        height: 56,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              color: color,
+              size: 28,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: GoogleFonts.roboto(
+                fontSize: 12,
+                color: color,
+                height: 1.333,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) { // Add context parameter
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
@@ -88,7 +191,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () => _navigateToEditProfile(context), // Add navigation
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.black,

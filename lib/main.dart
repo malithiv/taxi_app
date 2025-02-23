@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:taxi_app/HistoryScreen.dart';
+import 'package:taxi_app/HomeScreen.dart';
+import 'package:taxi_app/ProfileScreen.dart';
 import 'package:taxi_app/SplashScreen.dart';
 
 void main() {
@@ -16,7 +19,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const SplashScreenWrapper(), // Start with SplashScreenWrapper
+      home: const SplashScreenWrapper(),
+
+      routes: {
+        '/home': (context) => const HomeScreen(),
+        '/history': (context) => const HistoryScreen(),
+        '/profile': (context) => const ProfileScreen(),
+      },
     );
   }
 }

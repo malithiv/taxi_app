@@ -349,9 +349,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildNavItem(Icons.home_outlined, 'Home', true),
+          _buildNavItem(Icons.home_outlined, 'Home', false),
           _buildNavItem(Icons.history, 'History', false),
-          _buildNavItem(Icons.person_outline, 'Profile', false),
+          _buildNavItem(Icons.person_outline, 'Profile', true),
         ],
       ),
     );
@@ -361,7 +361,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return GestureDetector(
       onTap: () {
         if (!isSelected) {
-          Navigator.pop(context);
+          switch (label) {
+            case 'Home':
+              Navigator.pushReplacementNamed(context, '/home');
+              break;
+            case 'History':
+              Navigator.pushReplacementNamed(context, '/history');
+              break;
+            case 'Profile':
+              Navigator.pushReplacementNamed(context, '/profile');
+              break;
+          }
         }
       },
       child: Column(

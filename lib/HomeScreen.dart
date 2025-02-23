@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taxi_app/HistoryScreen.dart';
 import 'package:taxi_app/ProfileScreen.dart';
 import 'package:taxi_app/TripSummaryScreen.dart';
 
@@ -345,13 +346,23 @@ class _HomeScreenState extends State<HomeScreen> {
     return GestureDetector(
       onTap: () {
         setState(() => _selectedIndex = index);
-        if (index == 2) { // Profile icon index
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const ProfileScreen(),
-            ),
-          );
+        switch (index) {
+          case 1: // History
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HistoryScreen(),
+              ),
+            );
+            break;
+          case 2: // Profile
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ProfileScreen(),
+              ),
+            );
+            break;
         }
       },
       child: Column(
@@ -374,6 +385,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
 }
 
 // You might also want to create these model classes to handle the data:

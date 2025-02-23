@@ -62,7 +62,7 @@ class _SplashScreenWrapperState extends State<SplashScreenWrapper> {
   }
 
   _navigateToOnboarding() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 5));
     if (mounted) {  // Check if the widget is still mounted
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(

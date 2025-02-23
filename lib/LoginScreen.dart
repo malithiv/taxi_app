@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:taxi_app/CustomerHomeScreen.dart';
+import 'package:taxi_app/HomeScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -13,6 +15,39 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLogin = true;
   bool rememberMe = false;
   bool obscurePassword = true;
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  // Handle login navigation based on user type
+  void _handleLogin(BuildContext context) {
+    // Here you can add validation logic before navigation
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all fields')),
+      );
+      return;
+    }
+
+    if (isCustomer) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const CustomerHomeScreen()),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 277,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color(0x101B9AF5),
+                  color: Color(0xFF1B9AF5),
                 ),
               ),
             ),
@@ -124,6 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         // Email input
                         TextFormField(
+                          controller: _emailController,
                           decoration: InputDecoration(
                             hintText: 'Email or Phone Number',
                             hintStyle: GoogleFonts.roboto(
@@ -146,6 +182,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         // Password input
                         TextFormField(
+                          controller: _passwordController,
                           obscureText: obscurePassword,
                           decoration: InputDecoration(
                             hintText: 'Password',
@@ -216,9 +253,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           width: double.infinity,
                           height: 45,
                           child: ElevatedButton(
-                            onPressed: () {
-                              // Add login logic
-                            },
+                            onPressed: () => _handleLogin(context),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF1B9AF5),
                               shape: RoundedRectangleBorder(
