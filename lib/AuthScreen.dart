@@ -72,16 +72,25 @@ class _AuthScreenState extends State<AuthScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildToggleButton(
-                        title: 'Customer',
-                        isSelected: isCustomer,
-                        onTap: () => setState(() => isCustomer = true),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: _buildToggleButton(
+                            title: 'Customer',
+                            isSelected: isCustomer,
+                            onTap: () => setState(() => isCustomer = true),
+                          ),
+                        ),
                       ),
-                      const SizedBox(width: 16),
-                      _buildToggleButton(
-                        title: 'Driver',
-                        isSelected: !isCustomer,
-                        onTap: () => setState(() => isCustomer = false),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: _buildToggleButton(
+                            title: 'Driver',
+                            isSelected: !isCustomer,
+                            onTap: () => setState(() => isCustomer = false),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -108,16 +117,20 @@ class _AuthScreenState extends State<AuthScreen> {
                         // Login/Signup tabs
                         Row(
                           children: [
-                            _buildTabButton(
-                              title: 'Login',
-                              isSelected: isLogin,
-                              onTap: () => setState(() => isLogin = true),
+                            Expanded(
+                              child: _buildTabButton(
+                                title: 'Login',
+                                isSelected: isLogin,
+                                onTap: () => setState(() => isLogin = true),
+                              ),
                             ),
                             const SizedBox(width: 16),
-                            _buildTabButton(
-                              title: 'Sign Up',
-                              isSelected: !isLogin,
-                              onTap: () => setState(() => isLogin = false),
+                            Expanded(
+                              child: _buildTabButton(
+                                title: 'Sign Up',
+                                isSelected: !isLogin,
+                                onTap: () => setState(() => isLogin = false),
+                              ),
                             ),
                           ],
                         ),
@@ -372,7 +385,6 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  // Helper widgets remain the same as in the previous implementation
   Widget _buildToggleButton({
     required String title,
     required bool isSelected,
@@ -381,9 +393,8 @@ class _AuthScreenState extends State<AuthScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 163.5,
-        height: 100, // Increased from 97 to 100
-        padding: const EdgeInsets.all(14), // Reduced from 16 to 14
+        height: 100,
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(4),

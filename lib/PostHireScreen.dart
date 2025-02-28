@@ -10,11 +10,106 @@ class PostHireScreen extends StatefulWidget {
 
 class _PostHireScreenState extends State<PostHireScreen> {
   bool agreeToTerms = false;
+  bool isRoundTrip = false;
+  final TextEditingController _phone1Controller = TextEditingController();
+  final TextEditingController _phone2Controller = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _pickupLocationController = TextEditingController();
+  final TextEditingController _stopLocationController = TextEditingController();
+  final TextEditingController _dropoffLocationController = TextEditingController();
+  final TextEditingController _vehicleTypeController = TextEditingController();
+  final TextEditingController _passengersController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
+  final TextEditingController _returnDateController = TextEditingController();
+  final TextEditingController _returnTimeController = TextEditingController();
+  DateTime? returnDate;
+  TimeOfDay? returnTime;
+  DateTime? selectedDate;
+  TimeOfDay? selectedTime;
+
+  @override
+  void dispose() {
+    _phone1Controller.dispose();
+    _phone2Controller.dispose();
+    _descriptionController.dispose();
+    _pickupLocationController.dispose();
+    _stopLocationController.dispose();
+    _dropoffLocationController.dispose();
+    _dateController.dispose();
+    _timeController.dispose();
+    _vehicleTypeController.dispose();
+    _passengersController.dispose();
+    super.dispose();
+  }
+
+
+
+// Update the date picker method
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+        _dateController.text = '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}';
+      });
+    }
+  }
+
+// Update the time picker method
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: selectedTime ?? TimeOfDay.now(),
+    );
+    if (picked != null && picked != selectedTime) {
+      setState(() {
+        selectedTime = picked;
+        _timeController.text = picked.format(context);
+      });
+    }
+  }
+
+// Update the return date picker method
+  Future<void> _selectReturnDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: returnDate ?? (selectedDate?.add(const Duration(days: 1)) ?? DateTime.now()),
+      firstDate: selectedDate ?? DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (picked != null && picked != returnDate) {
+      setState(() {
+        returnDate = picked;
+        _returnDateController.text = '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}';
+      });
+    }
+  }
+
+// Update the return time picker method
+  Future<void> _selectReturnTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: returnTime ?? TimeOfDay.now(),
+    );
+    if (picked != null && picked != returnTime) {
+      setState(() {
+        returnTime = picked;
+        _returnTimeController.text = picked.format(context);
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: Colors.white,
       appBar: _buildAppBar(),
       body: SingleChildScrollView(
         child: Padding(
@@ -40,15 +135,18 @@ class _PostHireScreenState extends State<PostHireScreen> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.lightBlue,
       elevation: 2,
-      shadowColor: Colors.black.withOpacity(0.05),
       title: Text(
-        'logo',
+        'Post New Hire',
         style: GoogleFonts.roboto(
           fontSize: 20,
-          color: const Color(0xFF1B9AF5),
+          color: Colors.white,
         ),
+      ),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.black),
+        onPressed: () => Navigator.pop(context),
       ),
     );
   }
@@ -57,6 +155,7 @@ class _PostHireScreenState extends State<PostHireScreen> {
     return Card(
       elevation: 2,
       shadowColor: Colors.black.withOpacity(0.05),
+      color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
       ),
@@ -73,52 +172,122 @@ class _PostHireScreenState extends State<PostHireScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            _buildInputField(
-              label: 'Pickup Location',
-              value: 'Ayagama',
-              icon: Icons.location_on_outlined,
-            ),
-            const SizedBox(height: 16),
-            _buildInputField(
-              label: 'Drop-off Location',
-              value: 'Ratnapura',
-              icon: Icons.location_on_outlined,
-            ),
-            const SizedBox(height: 16),
             Row(
               children: [
-                Expanded(
-                  child: _buildInputField(
-                    label: 'Date',
-                    value: '14/02/2025',
-                    icon: Icons.calendar_today_outlined,
+                Text(
+                  'Round Trip',
+                  style: GoogleFonts.roboto(
+                    fontSize: 14,
+                    color: const Color(0xFF4B5563),
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildInputField(
-                    label: 'Time',
-                    value: 'Now',
-                    icon: Icons.access_time,
-                  ),
+                const Spacer(),
+                Switch(
+                  inactiveTrackColor: Colors.white,
+                  value: isRoundTrip,
+                  onChanged: (value) {
+                    setState(() {
+                      isRoundTrip = value;
+                    });
+                  },
+                  activeColor: Colors.lightBlue,
                 ),
               ],
             ),
             const SizedBox(height: 16),
+            _buildTextField(
+              controller: _pickupLocationController,
+              label: 'Pickup Location',
+              icon: Icons.location_on_outlined,
+            ),
+            if (isRoundTrip) ...[
+              const SizedBox(height: 16),
+              _buildTextField(
+                controller: _stopLocationController,
+                label: 'Stop Location',
+                icon: Icons.add_location_alt_outlined,
+              ),
+            ],
+            const SizedBox(height: 16),
+            _buildTextField(
+              controller: _dropoffLocationController,
+              label: 'Drop-off Location',
+              icon: Icons.location_on_outlined,
+            ),
+            const SizedBox(height: 16),
+            // In the _buildTripDetailsCard method, replace the date/time Row with:
             Row(
               children: [
                 Expanded(
-                  child: _buildInputField(
+                  child: GestureDetector(
+                    onTap: () => _selectDate(context),
+                    child: _buildTextField(
+                      controller: _dateController,
+                      label: 'Date',
+                      icon: Icons.calendar_today_outlined,
+                      readOnly: true, // Make it read-only
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => _selectTime(context),
+                    child: _buildTextField(
+                      controller: _timeController,
+                      label: 'Time',
+                      icon: Icons.access_time,
+                      readOnly: true, // Make it read-only
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            if (isRoundTrip) ...[
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => _selectReturnDate(context),
+                      child: _buildTextField(
+                        controller: _returnDateController,
+                        label: 'Return Date',
+                        icon: Icons.calendar_today_outlined,
+                        readOnly: true,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => _selectReturnTime(context),
+                      child: _buildTextField(
+                        controller: _returnTimeController,
+                        label: 'Return Time',
+                        icon: Icons.access_time,
+                        readOnly: true,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildTextField(
+                    controller: _vehicleTypeController,
                     label: 'Vehicle Type',
-                    value: 'Dimo batta',
                     icon: Icons.directions_car_outlined,
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: _buildInputField(
+                  child: _buildTextField(
+                    controller: _passengersController,
                     label: 'Passengers',
-                    value: '01',
                     icon: Icons.person_outline,
                   ),
                 ),
@@ -132,6 +301,7 @@ class _PostHireScreenState extends State<PostHireScreen> {
 
   Widget _buildDescriptionCard() {
     return Card(
+      color: Colors.white,
       elevation: 2,
       shadowColor: Colors.black.withOpacity(0.05),
       shape: RoundedRectangleBorder(
@@ -151,12 +321,17 @@ class _PostHireScreenState extends State<PostHireScreen> {
             ),
             const SizedBox(height: 16),
             TextField(
+              controller: _descriptionController,
               maxLines: 4,
               decoration: InputDecoration(
                 hintText: 'Enter description',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: const BorderSide(color: Color(0xFF6B7280)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(color: Colors.lightBlue),
                 ),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
@@ -169,6 +344,7 @@ class _PostHireScreenState extends State<PostHireScreen> {
 
   Widget _buildContactInfoCard() {
     return Card(
+      color: Colors.white,
       elevation: 2,
       shadowColor: Colors.black.withOpacity(0.05),
       shape: RoundedRectangleBorder(
@@ -187,36 +363,91 @@ class _PostHireScreenState extends State<PostHireScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            _buildContactItem('0716510002'),
+            TextField(
+              controller: _phone1Controller,
+              keyboardType: TextInputType.phone,
+              decoration: _buildPhoneInputDecoration('Primary Phone Number'),
+            ),
             const SizedBox(height: 12),
-            _buildContactItem('0769862124'),
+            TextField(
+              controller: _phone2Controller,
+              keyboardType: TextInputType.phone,
+              decoration: _buildPhoneInputDecoration('Alternative Phone Number (Optional)'),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildContactItem(String number) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+  InputDecoration _buildPhoneInputDecoration(String hint) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: GoogleFonts.roboto(
+        fontSize: 14,
+        color: const Color(0xFF6B7280),
+      ),
+      prefixIcon: const Icon(
+        Icons.phone_outlined,
+        size: 18,
+        color: Color(0xFF6B7280),
+      ),
+      border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Color(0xFF6B7280)),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            number,
-            style: GoogleFonts.roboto(fontSize: 14),
-          ),
-          const Icon(
-            Icons.phone_outlined,
-            size: 14,
-            color: Colors.black,
-          ),
-        ],
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Color(0xFF6B7280)),
       ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Colors.lightBlue),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    );
+  }
+
+
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    bool readOnly = false,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.roboto(
+            fontSize: 14,
+            color: const Color(0xFF4B5563),
+          ),
+        ),
+        const SizedBox(height: 4),
+        TextField(
+          controller: controller,
+          readOnly: readOnly,
+          decoration: InputDecoration(
+            prefixIcon: Icon(icon, size: 18, color: const Color(0xFF6B7280)),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Color(0xFF6B7280)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Color(0xFF6B7280)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Colors.lightBlue),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          ),
+        ),
+      ],
     );
   }
 
@@ -288,6 +519,7 @@ class _PostHireScreenState extends State<PostHireScreen> {
                     agreeToTerms = value ?? false;
                   });
                 },
+                activeColor: Colors.lightBlue,
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -307,10 +539,18 @@ class _PostHireScreenState extends State<PostHireScreen> {
             height: 45,
             child: ElevatedButton(
               onPressed: () {
+                if (!agreeToTerms) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please accept the terms and conditions'),
+                    ),
+                  );
+                  return;
+                }
                 Navigator.pushNamed(context, '/myhires');
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1B9AF5),
+                backgroundColor: Colors.lightBlue,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4),
                 ),
@@ -318,6 +558,7 @@ class _PostHireScreenState extends State<PostHireScreen> {
               child: Text(
                 'Post Hire',
                 style: GoogleFonts.roboto(
+                  color: Colors.white,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
@@ -326,46 +567,6 @@ class _PostHireScreenState extends State<PostHireScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildInputField({
-    required String label,
-    required String value,
-    required IconData icon,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: GoogleFonts.roboto(
-            fontSize: 14,
-            color: const Color(0xFF4B5563),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Container(
-          height: 38,
-          padding: const EdgeInsets.only(left: 40, right: 16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: const Color(0xFF6B7280)),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  value,
-                  style: GoogleFonts.roboto(fontSize: 14),
-                ),
-              ),
-              Icon(icon, size: 14),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

@@ -22,6 +22,8 @@ class _ProfileCreationScreenState extends State<ProfileCreationScreen> {
   File? _image;
   bool termsAccepted = false;
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _dateController = TextEditingController();
+
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
@@ -42,7 +44,8 @@ class _ProfileCreationScreenState extends State<ProfileCreationScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         title: Text(
-          widget.isDriver ? 'Driver Profile Creation' : 'Customer Profile Creation',
+          // widget.isDriver ? 'Driver Profile Creation' : 'Customer Profile Creation',
+          "Driver Profile Creation",
           style: GoogleFonts.roboto(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -144,6 +147,7 @@ class _ProfileCreationScreenState extends State<ProfileCreationScreen> {
                 const SizedBox(height: 12),
 
                 TextFormField(
+                  controller: _dateController,
                   decoration: _buildInputDecoration('Date of Birth')
                       .copyWith(suffixIcon: const Icon(Icons.calendar_today, size: 16)),
                   readOnly: true,
@@ -154,7 +158,20 @@ class _ProfileCreationScreenState extends State<ProfileCreationScreen> {
                       firstDate: DateTime(1950),
                       lastDate: DateTime.now(),
                     );
-                    // Handle date selection
+                    if (picked != null) {
+                      setState(() {
+                        // Format the date as dd/MM/yyyy
+                        _dateController.text = "${picked.day.toString().padLeft(2, '0')}/"
+                            "${picked.month.toString().padLeft(2, '0')}/"
+                            "${picked.year.toString()}";
+                      });
+                    }
+                  },
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return 'Please select your date of birth';
+                    }
+                    return null;
                   },
                 ),
 
@@ -162,6 +179,19 @@ class _ProfileCreationScreenState extends State<ProfileCreationScreen> {
 
                 TextFormField(
                   decoration: _buildInputDecoration('Phone Number'),
+                  keyboardType: TextInputType.phone,
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return 'Please enter your phone number';
+                    }
+                    return null;
+                  },
+                ),
+
+                const SizedBox(height: 12),
+
+                TextFormField(
+                  decoration: _buildInputDecoration('ID Card Number'),
                   keyboardType: TextInputType.phone,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
@@ -186,18 +216,6 @@ class _ProfileCreationScreenState extends State<ProfileCreationScreen> {
 
                 const SizedBox(height: 12),
 
-                TextFormField(
-                  decoration: _buildInputDecoration('Home Address'),
-                  maxLines: 3,
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) {
-                      return 'Please enter your address';
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: 36),
 
                 // Terms and Conditions
                 Row(

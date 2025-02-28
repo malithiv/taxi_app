@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'CustomerHomeScreen.dart';
+
 class TripSummaryScreen extends StatefulWidget {
   const TripSummaryScreen({Key? key}) : super(key: key);
 
@@ -100,8 +102,13 @@ class _TripSummaryScreenState extends State<TripSummaryScreen> {
               padding: const EdgeInsets.all(16),
               child: ElevatedButton(
                 onPressed: () {
-                  // Handle submission
-                  Navigator.pop(context);
+                  // Navigate to CustomerHomeScreen and remove all previous routes
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) => const CustomerHomeScreen(),
+                    ),
+                        (route) => false, // This removes all previous routes from the stack
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF16A34A),

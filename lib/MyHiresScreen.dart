@@ -188,23 +188,6 @@ class MyHiresScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.navigation_outlined, size: 14),
-                  label: Text(
-                    'Track',
-                    style: GoogleFonts.roboto(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1B9AF5),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                ),
-              ),
             ],
           ),
         ],
@@ -268,22 +251,7 @@ class MyHiresScreen extends StatelessWidget {
           _buildVehicleInfo('Honda Vezel - WP CAB 5678'),
           const SizedBox(height: 16),
           Center(
-            child: OutlinedButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.star_border, size: 14),
-              label: Text(
-                'Rate Driver',
-                style: GoogleFonts.roboto(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: const Color(0xFF1B9AF5),
-                side: const BorderSide(color: Color(0xFF1B9AF5)),
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-              ),
-            ),
+
           ),
         ],
       ),

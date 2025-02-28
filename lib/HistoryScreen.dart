@@ -24,7 +24,11 @@ class HistoryScreen extends StatelessWidget {
 
   Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.all(24),
+      width: double.infinity, // This makes the container take full width
+      padding: const EdgeInsets.symmetric(
+        vertical: 24,
+        horizontal: 24,
+      ),
       decoration: const BoxDecoration(
         color: Color(0xFF023047),
         borderRadius: BorderRadius.only(

@@ -219,14 +219,18 @@ class _CabServicePendingScreenState extends State<CabServicePendingScreen> {
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: () {},
-                  icon: const Icon(Icons.check, size: 14),
+                  icon: const Icon(Icons.check, size: 14, color: Colors.white),  // Set icon color
                   label: Text(
                     'Accept',
-                    style: GoogleFonts.roboto(fontSize: 14),
+                    style: GoogleFonts.roboto(
+                      fontSize: 14,
+                      color: Colors.white,  // Set text color
+                    ),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1B9AF5),
                     padding: const EdgeInsets.symmetric(vertical: 8),
+                    foregroundColor: Colors.white,  // This sets the default color for both icon and text
                   ),
                 ),
               ),
@@ -274,8 +278,10 @@ class _CabServicePendingScreenState extends State<CabServicePendingScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildNavItem(0, Icons.home_outlined, 'Home'),
-          const Spacer(),
-          _buildNavItem(1, Icons.person_outline, 'Profile'),
+          _buildNavItem(1, Icons.history, 'History'),
+          const SizedBox(width: 60),
+          _buildNavItem(2, Icons.map, 'My Hires'),
+          _buildNavItem(3, Icons.person_outline, 'Profile'),
         ],
       ),
     );
@@ -283,26 +289,23 @@ class _CabServicePendingScreenState extends State<CabServicePendingScreen> {
 
   Widget _buildNavItem(int index, IconData icon, String label) {
     final isSelected = _selectedIndex == index;
-    return GestureDetector(
-      onTap: () => setState(() => _selectedIndex = index),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            size: 24,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          icon,
+          size: 24,
+          color: isSelected ? const Color(0xFF1B9AF5) : const Color(0xFF9CA3AF),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: GoogleFonts.roboto(
+            fontSize: 12,
             color: isSelected ? const Color(0xFF1B9AF5) : const Color(0xFF9CA3AF),
           ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: GoogleFonts.roboto(
-              fontSize: 12,
-              color: isSelected ? const Color(0xFF1B9AF5) : const Color(0xFF9CA3AF),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

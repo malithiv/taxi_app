@@ -20,10 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Taxi App',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const CustomerHomeScreen(),
+      home: const SplashScreenWrapper(),
 
       routes: {
         '/home': (context) => const HomeScreen(),

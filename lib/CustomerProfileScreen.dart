@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'CabServicePendingScreen.dart';
+
 class CustomerProfileScreen extends StatelessWidget {
   const CustomerProfileScreen({Key? key}) : super(key: key);
 
@@ -8,12 +10,15 @@ class CustomerProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
-      body: Column(
-        children: [
-          _buildHeader(),
-          _buildProfileStats(),
-          _buildSettings(),
-        ],
+      body: SingleChildScrollView(  // Added this
+        child: Column(
+          children: [
+            _buildHeader(),
+            _buildProfileStats(),
+            _buildSettings(context),
+            const SizedBox(height: 80),  // Added padding for FAB
+          ],
+        ),
       ),
       bottomNavigationBar: _buildBottomNavBar(context),
       floatingActionButton: _buildFloatingActionButton(context),
@@ -23,8 +28,7 @@ class CustomerProfileScreen extends StatelessWidget {
 
   Widget _buildHeader() {
     return Container(
-      height: 177,
-      decoration: const BoxDecoration(
+      decoration: const BoxDecoration(  // Removed fixed height
         color: Color(0xFF023047),
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(40),
@@ -35,6 +39,7 @@ class CustomerProfileScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
+            mainAxisSize: MainAxisSize.min,  // Added this to prevent expansion
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -66,43 +71,29 @@ class CustomerProfileScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Michael Anderson',
-                        style: GoogleFonts.roboto(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                  Expanded(  // Added this to prevent text overflow
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,  // Added this
+                      children: [
+                        Text(
+                          'Michael Anderson',
+                          style: GoogleFonts.roboto(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      Text(
-                        '(2,145 trips)',
-                        style: GoogleFonts.roboto(
-                          fontSize: 14,
-                          color: Colors.white,
+                        Text(
+                          '(2,145 trips)',
+                          style: GoogleFonts.roboto(
+                            fontSize: 14,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      // ElevatedButton(
-                      //   onPressed: () {},
-                      //   style: ElevatedButton.styleFrom(
-                      //     backgroundColor: Colors.white,
-                      //     padding: const EdgeInsets.symmetric(
-                      //       horizontal: 12,
-                      //       vertical: 4,
-                      //     ),
-                      //   ),
-                      //   child: Text(
-                      //     'Edit Profile',
-                      //     style: GoogleFonts.roboto(
-                      //       fontSize: 14,
-                      //       color: Colors.black,
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
+                        const SizedBox(height: 8),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -241,7 +232,7 @@ class CustomerProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSettings() {
+  Widget _buildSettings(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -254,7 +245,15 @@ class CustomerProfileScreen extends StatelessWidget {
           const SizedBox(height: 16),
           _buildSettingButton(
             'Logout',
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CabServicePendingScreen(// Replace with actual phone number
+                  ),
+                ),
+              );
+            },
             isLogout: true,
           ),
         ],
