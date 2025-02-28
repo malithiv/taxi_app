@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taxi_app/OTPVerificationScreen.dart';
+import 'dart:convert';
+import 'dart:math';
+import 'package:http/http.dart' as http;
+
+import 'CustomerHomeScreen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({Key? key}) : super(key: key);
@@ -10,11 +15,221 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+  // In _AuthScreenState class
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
+  bool isLoading = false;
+  String? errorMessage;
   bool isCustomer = true;
   bool isLogin = true;
   bool obscurePassword = true;
   bool obscureConfirmPassword = true;
-  int selectedUserType = 0; // 0 for Normal Customer, 1 for Cab Service
+  int selectedUserType = 0; // 0 for Normal Customer, 1 for Cab Service, 2 for Business Customer
+
+
+  // Format phone number for API
+  String formatPhoneNumber(String phoneNumber) {
+    // Remove spaces, dashes, etc.
+    String cleaned = phoneNumber.replaceAll(RegExp(r'[^\d]'), '');
+
+    // If the number starts with 0, remove it (assuming Sri Lankan format)
+    if (cleaned.startsWith('0')) {
+      cleaned = cleaned.substring(1);
+    }
+
+    // Return international format
+    return '94$cleaned';
+  }
+
+// Generate OTP
+  String generateOTP() {
+    Random random = Random();
+    int otp = random.nextInt(9000) + 1000; // 4-digit code between 1000-9999
+    return otp.toString();
+  }
+
+// Login function
+  Future<void> login() async {
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://145.223.21.62:5050/customers/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'phone_number': formatPhoneNumber(phoneController.text),
+          'password': passwordController.text,
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        // Navigate to home page
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CustomerHomeScreen(),
+          ),
+        );
+      } else {
+        setState(() {
+          errorMessage = data['message'] ?? 'Login failed';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Connection error: ${e.toString()}';
+      });
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+// Get customer type string based on selection
+  String getCustomerTypeString() {
+    switch (selectedUserType) {
+      case 0:
+        return 'normal_customer';
+      case 1:
+        return 'cab_service';
+      case 2:
+        return 'business_customer';
+      default:
+        return 'normal_customer';
+    }
+  }
+
+// Register function
+  Future<void> register() async {
+    // Validate passwords match
+    if (passwordController.text != confirmPasswordController.text) {
+      setState(() {
+        errorMessage = 'Passwords do not match';
+      });
+      return;
+    }
+
+    // Validate phone number
+    if (phoneController.text.isEmpty) {
+      setState(() {
+        errorMessage = 'Phone number is required';
+      });
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
+    try {
+      // First, register the user in your backend
+      final registrationResponse = await http.post(
+        Uri.parse('http://145.223.21.62:5050/customers/'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'phone_number': formatPhoneNumber(phoneController.text),
+          'password': passwordController.text,
+          'customer_type': getCustomerTypeString(),
+        }),
+      );
+
+      final data = jsonDecode(registrationResponse.body);
+
+      if (registrationResponse.statusCode == 201) {
+        // User registered successfully, now generate and send OTP
+        String otp = generateOTP(); // Generate a 4-digit OTP
+        String fullPhoneNumber = formatPhoneNumber(phoneController.text);
+
+        // Log for debugging
+        print('User registered with ID: ${data['customerId']}');
+        print('Phone number: $fullPhoneNumber');
+        print('Generated OTP: $otp');
+
+        // Notify.lk API credentials
+        const String userId = '28446';  // Replace with your actual credentials
+        const String apiKey = 'Qfc88oVCjT7zGQhVbKk9';  // Replace with your actual credentials
+        const String senderId = 'NotifyDEMO';  // Replace with your actual credentials
+
+        // Notify.lk API endpoint
+        const String url = 'https://app.notify.lk/api/v1/send';
+
+        // Prepare the message content
+        String message = 'Your verification code is $otp. Please use this to verify your account.';
+
+        // API call parameters
+        final Map<String, String> queryParams = {
+          'user_id': userId,
+          'api_key': apiKey,
+          'sender_id': senderId,
+          'to': fullPhoneNumber.replaceAll('+', ''), // Ensure the phone number is in 947XXXXXXXX format
+          'message': message,
+        };
+
+        try {
+          // Send OTP via Notify.lk API
+          final notifyResponse = await http.post(
+            Uri.parse(url).replace(queryParameters: queryParams),
+          );
+
+          // Log response for debugging
+          print('Notify.lk API response: ${notifyResponse.body}');
+
+          if (notifyResponse.statusCode == 200) {
+            final notifyData = notifyResponse.body;
+
+            // Check if OTP was sent successfully
+            if (notifyData.contains('"status":"success"')) {
+              // Navigate to OTP verification screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OTPVerificationScreen(
+                    phoneNumber: fullPhoneNumber,
+                    otp: otp,
+                    userId: data['customerId'], // Pass the user ID for verification later
+                    customerType: getCustomerTypeString(), // Pass the customer type to OTP screen
+                  ),
+                ),
+              );
+            } else {
+              setState(() {
+                errorMessage = 'Failed to send verification code. Please try again.';
+              });
+            }
+          } else {
+            setState(() {
+              errorMessage = 'Failed to send verification code. Status: ${notifyResponse.statusCode}';
+            });
+          }
+        } catch (e) {
+          setState(() {
+            errorMessage = 'Error sending verification code: ${e.toString()}';
+          });
+        }
+      } else {
+        // Registration failed
+        setState(() {
+          errorMessage = data['message'] ?? 'Registration failed. Please try again.';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Connection error: ${e.toString()}';
+      });
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,6 +354,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
                         // Email input
                         TextFormField(
+                          controller: phoneController,
                           decoration: InputDecoration(
                             hintText: 'Email or Phone Number',
                             hintStyle: GoogleFonts.roboto(
@@ -161,6 +377,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
                         // Password input
                         TextFormField(
+                          controller: passwordController,
                           obscureText: obscurePassword,
                           decoration: InputDecoration(
                             hintText: 'Password',
@@ -191,6 +408,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           const SizedBox(height: 16),
                           // Confirm Password input (only for signup)
                           TextFormField(
+                            controller: confirmPasswordController,
                             obscureText: obscureConfirmPassword,
                             decoration: InputDecoration(
                               hintText: 'Confirm Password',
@@ -255,6 +473,24 @@ class _AuthScreenState extends State<AuthScreen> {
                               ),
                             ],
                           ),
+                          Row(
+                            children: [
+                              Radio(
+                                value: 2,
+                                groupValue: selectedUserType,
+                                onChanged: (value) => setState(() => selectedUserType = value as int),
+                                activeColor: const Color(0xFF1B9AF5),
+                              ),
+                              Text(
+                                'Business Customer',
+                                style: GoogleFonts.roboto(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xFF111827),
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
 
                         if (isLogin) ...[
@@ -296,35 +532,20 @@ class _AuthScreenState extends State<AuthScreen> {
                         const SizedBox(height: 16),
 
                         // Action button
-                        // Inside your AuthScreen class, update the action button's onPressed callback:
-
-// Action button
                         SizedBox(
                           width: double.infinity,
                           height: 45,
                           child: ElevatedButton(
-                            onPressed: () {
-                              if (!isLogin) {
-                                // For sign up, navigate to OTP verification
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const OTPVerificationScreen(
-                                      phoneNumber: "+1 (***) *** - 4589", // Replace with actual phone number
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                // Add login logic here
-                              }
-                            },
+                            onPressed: isLoading ? null : (isLogin ? login : register),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF1B9AF5),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-                            child: Text(
+                            child: isLoading
+                                ? CircularProgressIndicator(color: Colors.white)
+                                : Text(
                               isLogin ? 'Login' : 'Sign Up',
                               style: GoogleFonts.roboto(
                                 fontSize: 14,
@@ -334,6 +555,18 @@ class _AuthScreenState extends State<AuthScreen> {
                             ),
                           ),
                         ),
+
+                        if (errorMessage != null && errorMessage!.isNotEmpty) ...[
+                          const SizedBox(height: 16),
+                          Text(
+                            errorMessage!,
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 14,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ],
                     ),
                   ),
